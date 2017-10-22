@@ -65,10 +65,19 @@ class Data(object):
         for subset, subset_data in ndata.items():
             data = subset_data['results']
             ibm_data = ibm_ndata[subset]['results']
+            ibm_titles = [ibm_data[0, idx][0, 0]['name'][0]
+                          for idx in range(ibm_data.shape[1])]
+            # correct title(s) in ibm_titles (not in ibm_data)
+            if subset == 'Dev':
+                ibm_titles[ibm_titles.index('Mu_TooBright_Full')] = \
+                    'Mu - Too Bright'
 
             for track in range(data.shape[1]):
                 tdata = data[0, track][0, 0]
-                ibm_tdata = ibm_data[0, track][0, 0]
+                ibm_track = ibm_titles.index(
+                    difflib.get_close_matches(
+                        tdata['name'][0], ibm_titles, n=1)[0])
+                ibm_tdata = ibm_data[0, ibm_track][0, 0]
 
                 # check title
                 if not difflib.get_close_matches(
