@@ -64,9 +64,18 @@ class Data(object):
 
         for subset, subset_data in ndata.items():
             data = subset_data['results']
+            ibm_data = ibm_ndata[subset]['results']
+
             for track in range(data.shape[1]):
                 tdata = data[0, track][0, 0]
-                ibm_tdata = ibm_ndata[subset]['results'][0, track][0, 0]
+                ibm_tdata = ibm_data[0, track][0, 0]
+
+                # check title
+                if not difflib.get_close_matches(
+                        tdata['name'][0], [ibm_tdata['name'][0]], n=1):
+                    print 'WARNING: Title mismatch!\n\t%s: %s\n\t%s: %s' % \
+                        (filename, str(tdata['name'][0]),
+                         ibm_filename, str(ibm_tdata['name'][0]))
 
                 for target in [
                     'vocals', 'drums', 'other', 'bass', 'accompaniment'
